@@ -13,7 +13,7 @@ Is able to :
 
 ## Planning 
 
-| Names   | Séance1 | Séance2 | Séance3 | Séance4 | Séance5 | Séance6 | Séance7 | Séance8 |
-|---------|---------|---------|---------|---------|---------|---------|---------|---------|
-| Logan   |         |         |         |         |         |         |         |         |
-| Saveria |         |         |         |         |         |         |         |         |
+| Names   | Session1 | Session2 | Session3 | Session4 | Session5 | Session6 | Session7 | Session8 |
+|---------|----------|----------|----------|----------|----------|----------|----------|----------|
+| Logan   |          |          |          |          |          |          |          |          |
+| Saveria |          |          |          |          |          |          |          |          |
