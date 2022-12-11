@@ -17,7 +17,7 @@ The Connect FOUR:tm: project is a project aiming to create a connect 4 game with
 
 ## Planning 
 
-| Names   | Session1 | Session2 | Session3 | Session4 | Session5 | Session6 | Session7 | Session8 |
-|---------|----------|----------|----------|----------|----------|----------|----------|----------|
-| Logan   |          |          |          |          |          |          |          |          |
-| Saveria |          |          |          |          |          |          |          |          |
+| Names   | Session1                | Session2       | Session3          | Session4          | Session5                 | Session6     | Session7 | Session8 |
+|---------|-------------------------|----------------|-------------------|-------------------|--------------------------|--------------|----------|----------|
+| Logan   |Research materials needed|Code the game   |Code the game      |Code the AI        |Connect game and strucutre|Remote control|          |          |
+| Saveria |Research materials needed|Test the display|Build the structure|Build the structure|Get inputs                |Remote control|          |          |
