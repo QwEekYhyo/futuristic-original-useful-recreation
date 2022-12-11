@@ -1,15 +1,19 @@
-# Completely Awesome Ride
-Welcome to the CAR project :)
+# Futuristic Original Useful Recreation
+Welcome to the Connect FOUR:tm: project :)
+
+## Introduction
+The Connect FOUR:tm: project is a project aiming to create a connect 4 game with a futuristic design using a LED display. This way your children can flex on their friends because they have a better looking connect 4 with very very useful functionalities. The Connect FOUR:tm: game needs strategy this is why there is a training mode where you can play against an AI. Make your resting time productive with Connect FOUR:tm:.
 
 ## Specification
-Made for :
-- your average guy
-- children
-- military forces
+**Needs** :
+- avoid boredom in a productive way
+- update an old game
 <!-- end of list -->
-Is able to :
-- follow you
-- launch MICA-IR on moving target
+**Functionalities** :
+- cool looking display
+- play remotely
+- play against AI
+- customization
 
 ## Planning 
 
