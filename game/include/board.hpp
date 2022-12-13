@@ -3,6 +3,7 @@
 
 #include <array>
 #include <iostream>
+#include <utility>
 
 enum class player {
     one, 
@@ -22,10 +23,13 @@ class board {
     private:
         std::array<std::array<player, width>, height> m_grid;
         player m_current_player;
+        std::pair<int, int> m_last_position_played;
 
         void switch_player();
-        bool is_column_full(int column);
-        int get_upper(int column);
+        bool is_column_full(int column) const;
+        int get_upper(int column) const;
+        bool is_full() const;
+        player get_winner_from_arr(std::array<std::pair<int, int>, 4> coordinates) const;
 };
 
 #endif
