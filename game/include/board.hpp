@@ -18,6 +18,8 @@ class board {
         static constexpr int height = 6;
 
         void play(int column);
+        player& at(std::pair<int, int> coordinates);
+        const player& at(std::pair<int, int> coordinates) const;
         friend std::ostream& operator<<(std::ostream& os, const board& b);
 
     private:
@@ -29,7 +31,7 @@ class board {
         bool is_column_full(int column) const;
         int get_upper(int column) const;
         bool is_full() const;
-        player get_winner_from_arr(std::array<std::pair<int, int>, 4> coordinates) const;
+        player get_winner_from_arr(const std::array<std::pair<int, int>, 4> &coordinates) const;
 };
 
 #endif

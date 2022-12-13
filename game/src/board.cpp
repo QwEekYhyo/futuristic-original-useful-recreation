@@ -14,13 +14,13 @@ void board::switch_player() {
 }
 
 bool board::is_column_full(int column) const {
-    return m_grid.at(0).at(column) != player::none;
+    return at({column, 0}) != player::none;
 }
 
 int board::get_upper(int column) const {
     // we assume that this is called on a non-full column
     for (int i = height - 1; i >= 0; i--) {
-        if (m_grid.at(i).at(column) == player::none) {
+        if (at({column, i}) == player::none) {
             return i;
         }
     }
@@ -40,16 +40,26 @@ bool board::is_full() const {
 void board::play(int column) {
     if (!is_column_full(column)) {
         int top = get_upper(column);
-        m_grid.at(top).at(column) = m_current_player;
+        at({column, top}) = m_current_player;
         switch_player();
         m_last_position_played = std::make_pair(column, top);
     }
 }
 
-player board::get_winner_from_arr(std::array<std::pair<int, int>, 4> coords) const {
-    for (int i = 0; i < coords.length - 1; i++) {
-        auto current_player = m_grid.at(coord[i].second).at(coord[i].first);
-        auto next_player = m_grid.at(coord[i+1].second).at(coord[i+1].first);
+player& board::at(std::pair<int, int> coord) {
+    return m_grid.at(coord.second).at(coord.first);
+}
+
+const player& board::at(std::pair<int, int> coord) const {
+    return m_grid.at(coord.second).at(coord.first);
+}
+
+player board::get_winner_from_arr(const std::array<std::pair<int, int>, 4> &coords) const {
+    player current_player;
+    player next_player;
+    for (int i = 0; i < coords.size() - 1; i++) {
+        current_player = at({coords[i].first, coords[i].second});
+        next_player = at({coords[i+1].first, coords[i+1].second});
         if (current_player == player::none || current_player != next_player) {
             return player::none;
         }
@@ -60,9 +70,9 @@ player board::get_winner_from_arr(std::array<std::pair<int, int>, 4> coords) con
 std::ostream& operator<<(std::ostream& os, const board& b) {
     for (int i = 0; i < b.height; i++) {
         for (int j = 0; j < b.width; j++) {
-            if (b.m_grid.at(i).at(j) == player::one) {
+            if (b.at({j, i}) == player::one) {
                 os << 'Y';
-            } else if (b.m_grid.at(i).at(j) == player::two) {
+            } else if (b.at({j, i}) == player::two) {
                 os << 'R';
             } else {
                 os << '0';
