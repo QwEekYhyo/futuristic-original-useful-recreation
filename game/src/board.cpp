@@ -18,11 +18,10 @@ bool board::is_column_full(int column) {
 }
 
 int board::get_upper(int column) {
-    if (!is_column_full(column)) {
-        for (int i = height - 1; i >= 0; i--) {
-            if (m_grid.at(i).at(column) == player::none) {
-                return i;
-            }
+    // we assume that this is called on a non-full column
+    for (int i = height - 1; i >= 0; i--) {
+        if (m_grid.at(i).at(column) == player::none) {
+            return i;
         }
     }
     return 69; // compiler is crying because it might return void but in
