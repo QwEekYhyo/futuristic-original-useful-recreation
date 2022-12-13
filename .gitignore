@@ -32,3 +32,4 @@
 *.app
 
 game/build
+reports/Logan/*.odt
