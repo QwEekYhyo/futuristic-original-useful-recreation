@@ -58,8 +58,8 @@ player board::get_winner_from_arr(const std::array<std::pair<int, int>, 4> &coor
     player current_player;
     player next_player;
     for (int i = 0; i < coords.size() - 1; i++) {
-        current_player = at({coords[i].first, coords[i].second});
-        next_player = at({coords[i+1].first, coords[i+1].second});
+        current_player = at(coords[i]);
+        next_player = at(coords[i+1]);
         if (current_player == player::none || current_player != next_player) {
             return player::none;
         }
