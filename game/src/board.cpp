@@ -115,6 +115,20 @@ player board::get_winner() const {
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
     }
+
+    // vertical slash
+    starting_index = y - 3;
+    starting_index = starting_index >= 0 ? starting_index : 0;
+    ending_index = y;
+    ending_index = ending_index <= height - 4 ? ending_index : height - 4;
+    for (int i = starting_index; i <= ending_index; i++) {
+        for (int j = 0; j < 4; j++) {
+            segment[j] = std::make_pair(x, i + j);
+        }
+        winner = get_winner_from_arr(segment);
+        if (winner != player::none) {return winner;}
+    }
+
     return player::none;
 }
 
