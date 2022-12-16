@@ -2,14 +2,6 @@
 
 int main(void) {
     board b;
-    int c;
-
-    while (true) {
-        std::cout << b << '\n';
-        std::cout << "Column : ";
-        std::cin >> c;
-        b.play(c);
-        std::cout << '\n';
-    }
+    b.start_game();
     return 0;
 }

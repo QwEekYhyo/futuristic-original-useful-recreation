@@ -1,4 +1,6 @@
 #include <board.hpp>
+#include <iostream>
+#include <string>
 
 board::board() {
     for (auto& row : m_grid) {
@@ -46,11 +48,35 @@ void board::play(int column) {
     }
 }
 
+void board::start_game() {
+    int c;
+    bool working = true;
+    player winner;
+
+    std::cout << *this << '\n';
+    while (working) {
+        std::cout << "Column : ";
+        std::cin >> c;
+        play(c);
+        std::cout << '\n' << *this << '\n';
+        
+        winner = get_winner();
+        if (winner != player::none) {
+            std::string s_winner = winner == player::one ? "Player 1" : "Player 2";
+            std::cout << s_winner << " won !!" << std::endl;
+            working = false;
+        } else if (is_full()) {
+            std::cout << "Game over ! This is a tie" << std::endl;
+            working = false;
+        }
+    }
+}
+
 player& board::at(std::pair<int, int> coord) {
     return m_grid.at(coord.second).at(coord.first);
 }
 
-const player& board::at(std::pair<int, int> coord) const {
+const player& board::at(const std::pair<int, int> &coord) const {
     return m_grid.at(coord.second).at(coord.first);
 }
 
@@ -65,6 +91,31 @@ player board::get_winner_from_arr(const std::array<std::pair<int, int>, 4> &coor
         }
     }
     return current_player;
+}
+
+player board::get_winner() const {
+    int x = m_last_position_played.first;
+    int y = m_last_position_played.second;
+
+    int starting_index;
+    int ending_index;
+
+    std::array<std::pair<int, int>, 4> segment;
+    player winner;
+
+    // horizontal slash
+    starting_index = x - 3;
+    starting_index = starting_index >= 0 ? starting_index : 0;
+    ending_index = x;
+    ending_index = ending_index <= width - 4 ? ending_index : width - 4;
+    for (int i = starting_index; i <= ending_index; i++) {
+        for (int j = 0; j < 4; j++) {
+            segment[j] = std::make_pair(i + j, y);
+        }
+        winner = get_winner_from_arr(segment);
+        if (winner != player::none) {return winner;}
+    }
+    return player::none;
 }
 
 std::ostream& operator<<(std::ostream& os, const board& b) {
