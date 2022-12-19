@@ -97,18 +97,21 @@ player board::get_winner() const {
     int x = m_last_position_played.first;
     int y = m_last_position_played.second;
 
-    int starting_index;
-    int ending_index;
+    int starting_index1;
+    int starting_index2;
+    int ending_index1;
+    int ending_index2;
+    std::pair<int, int> diagonal_start;
 
     std::array<std::pair<int, int>, 4> segment;
     player winner;
 
     // horizontal slash
-    starting_index = x - 3;
-    starting_index = starting_index >= 0 ? starting_index : 0;
-    ending_index = x;
-    ending_index = ending_index <= width - 4 ? ending_index : width - 4;
-    for (int i = starting_index; i <= ending_index; i++) {
+    starting_index1 = x - 3;
+    starting_index1 = starting_index1 >= 0 ? starting_index1 : 0;
+    ending_index1 = x;
+    ending_index1 = ending_index1 <= width - 4 ? ending_index1 : width - 4;
+    for (int i = starting_index1; i <= ending_index1; i++) {
         for (int j = 0; j < 4; j++) {
             segment[j] = std::make_pair(i + j, y);
         }
@@ -117,13 +120,26 @@ player board::get_winner() const {
     }
 
     // vertical slash
-    starting_index = y - 3;
-    starting_index = starting_index >= 0 ? starting_index : 0;
-    ending_index = y;
-    ending_index = ending_index <= height - 4 ? ending_index : height - 4;
-    for (int i = starting_index; i <= ending_index; i++) {
+    starting_index2 = y - 3;
+    starting_index2 = starting_index2 >= 0 ? starting_index2 : 0;
+    ending_index2 = y;
+    ending_index2 = ending_index2 <= height - 4 ? ending_index2 : height - 4;
+    for (int i = starting_index2; i <= ending_index2; i++) {
         for (int j = 0; j < 4; j++) {
             segment[j] = std::make_pair(x, i + j);
+        }
+        winner = get_winner_from_arr(segment);
+        if (winner != player::none) {return winner;}
+    }
+
+    // diagonal (top left to bottom right) slash
+    int min = x - starting_index1 <=  y - starting_index2 ? x - starting_index1 : y - starting_index2;
+    diagonal_start = std::make_pair(x - min, y - min);
+    min = ending_index1 - diagonal_start.first <=  ending_index2 - diagonal_start.second ? ending_index1 - diagonal_start.first : ending_index2 - diagonal_start.second;
+
+    for (int i = 0; i <= min; i++) {
+        for (int j = 0; j < 4; j++) {
+            segment[j] = std::make_pair(diagonal_start.first + i + j, diagonal_start.second + i + j);
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
