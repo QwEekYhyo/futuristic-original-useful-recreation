@@ -145,6 +145,20 @@ player board::get_winner() const {
         if (winner != player::none) {return winner;}
     }
 
+    // diagonal (top right to bottom left) slash
+    min = 3 + ending_index1 - x <=  y - starting_index2 ? 3 + ending_index1 - x : y - starting_index2;
+    diagonal_start = std::make_pair(x + min, y - min);
+
+    min = diagonal_start.first - starting_index1 <=  ending_index2 - diagonal_start.second ? diagonal_start.first - starting_index1 : ending_index2 - diagonal_start.second;
+
+    for (int i = 0; i <= min; i++) {
+        for (int j = 0; j < 4; j++) {
+            segment[j] = std::make_pair(diagonal_start.first - i - j, diagonal_start.second + i + j);
+        }
+        winner = get_winner_from_arr(segment);
+        if (winner != player::none) {return winner;}
+    }
+
     return player::none;
 }
 
