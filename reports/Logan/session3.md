@@ -1,4 +1,4 @@
-# Session 2 report
+# Session 3 report
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This time the tears were tears of joy, because my partner recovered from her disease.
 Thanks to this we were able start prototyping and think about how we would be doing everything. I’ll let her describe more in detail what we came up with and I am going to explain the code I wrote.
