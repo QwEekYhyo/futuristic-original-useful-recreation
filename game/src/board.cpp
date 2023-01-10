@@ -119,10 +119,12 @@ player board::get_winner() const {
     for (int i = starting_index1; i <= ending_index1; i++) {
         for (int j = 0; j < 4; j++) {
             int temp[] = {i + j, y};
-            std::cout << "got here" << '\n';
             reassign(segment[j], temp);
         }
         winner = get_winner_from_arr(segment);
+        for (auto point: segment) {
+            std::cout << point[0] << " : " << point[1] << '\n';
+        }
         if (winner != player::none) {return winner;}
     }
 

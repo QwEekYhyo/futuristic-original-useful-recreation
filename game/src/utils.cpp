@@ -10,8 +10,7 @@ void reassign(int *arr1, int *arr2) {
     if (len1 != len2) {
         return;
     }
-    for (int i = 0; i < len1; i++) {
-        std::cout << arr1[i] << " and " << arr2[i] << '\n';
+    for (int i = 0; i <= len1; i++) {
         arr1[i] = arr2[i];
     }
 }
