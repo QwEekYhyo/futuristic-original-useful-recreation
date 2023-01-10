@@ -15,3 +15,5 @@ Enfin, on a réfléchi à comment relier les boutons (pour que le joueur choisis
 De plus on a récupéré une batterie externe que l’on peut recharger et ce sera le générateur de notre carte arduino.
 
  
+<img width="367" alt="avant pièce" src="https://user-images.githubusercontent.com/120170016/211630697-dd88c267-1a60-4904-b6da-d9b4336bd89d.png">
+<img width="359" alt="Capture d’écran 2023-01-10 à 19 16 33" src="https://user-images.githubusercontent.com/120170016/211630705-0d252289-99df-4ee3-9dde-5effc31ac4ab.png">
