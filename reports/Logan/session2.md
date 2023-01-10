@@ -6,3 +6,4 @@ Since last time I implemented the algorithm to check the winner. You can imagine
 of 4 on each line and the segment move along the line to check 4 by 4. The horizontal and vertical lines were pretty easy to code but I wasn’t expecting the diagonals to be this hard, it took me a lot of time.
 
 <!-- ![img](https://user-images.githubusercontent.com/74043892/207425105-9a00621e-3974-4cad-85fc-a0851a26011f.png) -->
+![img](https://user-images.githubusercontent.com/74043892/211599983-ae47ed57-3c76-4e85-9aca-077c4719a90c.png)
