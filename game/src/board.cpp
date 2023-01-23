@@ -68,6 +68,12 @@ void board::start_game() {
 
     std::cout << *this << '\n';
     while (working) {
+        if (m_current_player == player::two) {
+            int choice = choose_column();
+            play(choice);
+            std::cout << '\n' << *this << '\n';
+            continue;
+        }
         std::cout << "Column : ";
         std::cin >> c;
         play(c);
@@ -180,6 +186,102 @@ player board::get_winner() const {
     }
 
     return player::none;
+}
+
+template <int N>
+int board::count_in_arr(const array<coords, N> &coordinates, const player& target_player) const {
+    int ctr = 0;
+    for (int i = 0; i < N; i++) {
+        const coords& c = coordinates.at(i);
+        if (at(c) == target_player)
+            ctr++;
+    }
+    return ctr;
+}
+
+int board::evaluate_arr(const array<coords, 4> &coordinates,
+                        const player &current_player) const {
+    int score = 0;
+    player opponent = player::one;
+
+    if (current_player == player::one)
+        opponent = player::two;
+
+    int player_count = count_in_arr(coordinates, current_player);
+    int opponent_count = count_in_arr(coordinates, opponent);
+    int empty_count = count_in_arr(coordinates, player::none);
+
+    if (player_count == 4) {
+        score += 1000;
+    } else if (player_count == 3 && empty_count == 1) {
+        score += 5;
+    } else if (player_count == 2 && empty_count == 2) {
+        score += 2;
+    }
+
+    if (opponent_count == 3 && empty_count == 1)
+        score -= 4;
+
+    return score;
+}
+
+int board::evaluate_position(const player &current_player) const {
+    int score = 0;
+
+    array<coords, board::height> center_segment;
+    for (int i = 0; i < board::height; i++) {
+        coords c;
+        c.at(0) = i;
+        c.at(1) = 3;
+        center_segment.at(i) = c;
+    }
+
+    int center_count = count_in_arr(center_segment, current_player);
+    score += center_count * 6;
+
+    // TODO: other thing
+
+
+    std::cout << "score: " << score << "\n";
+
+    return score;
+}
+
+int board::choose_column() const {
+    int max_score = 0;
+    int max_column = 0; // player zero by default, might be random
+
+    for (int i = 0; i < board::width; i++) {
+        if (!is_column_full(i)) {
+            int column_score = negamax(*this, 2, player::two);
+            if (column_score > max_score) {
+              max_score = column_score;
+              max_column = i;
+            }
+        }
+    }
+
+    return max_column;
+}
+
+int negamax(const board &b, int depth, const player& current_player) {
+    if (depth == 0 /* || node is a terminal node */)
+        return b.evaluate_position(current_player);
+
+    int value = -1000000000; // -infinity
+
+    for (int i = 0; i < board::width; i++) {
+        if (!b.is_column_full(i)) {
+            board copied_board = b;
+            copied_board.play(i);
+            player opponent_player =
+                current_player == player::one ? player::two : player::one;
+            value = std::max(
+                value, -negamax(copied_board, depth - 1, opponent_player));
+        }
+    }
+
+    return 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const board& b) {

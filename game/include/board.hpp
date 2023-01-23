@@ -37,6 +37,15 @@ class board {
         void play(int column);
         player get_winner_from_arr(const array<coords, 4> &coordinates) const;
         player get_winner() const;
+
+        template <int N>
+        int count_in_arr(const array<coords, N> &coordinates, const player& target_player) const;
+
+        int evaluate_arr(const array<coords, 4> &coordinates, const player& current_player) const;
+        int evaluate_position(const player& current_player) const;
+        int choose_column() const;
+        friend int negamax(const board &b, int depth, const player& player);
 };
+
 
 #endif
