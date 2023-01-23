@@ -1,6 +1,17 @@
 #include <board.hpp>
 #include <iostream>
 
+std::ostream& operator<<(std::ostream& os, const player& p) {
+    if (p == player::one) {
+        os << 'Y';
+    } else if (p == player::two) {
+        os << 'R';
+    } else {
+        os << '0';
+    }
+    return os;
+}
+
 board::board() {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -177,13 +188,7 @@ std::ostream& operator<<(std::ostream& os, const board& b) {
         for (int j = 0; j < board::width; j++) {
             coord.at(0) = j;
             coord.at(1) = i;
-            if (b.at(coord) == player::one) {
-                os << 'Y';
-            } else if (b.at(coord) == player::two) {
-                os << 'R';
-            } else {
-                os << '0';
-            }
+            os << b.at(coord);
             os << ' ';
         }
         os << '\n';

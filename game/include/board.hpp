@@ -10,6 +10,8 @@ enum class player {
     none,
 };
 
+std::ostream& operator<<(std::ostream& os, const player& p);
+
 class board {
     public:
         board();
