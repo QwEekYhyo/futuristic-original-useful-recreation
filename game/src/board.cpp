@@ -51,7 +51,7 @@ bool board::is_full() const {
 
 void board::play(int column) {
     if (!is_column_full(column)) {
-        array<int, 2> coord;
+        coords coord;
         coord.at(0) = column;
         coord.at(1) = get_upper(column);
 
@@ -115,9 +115,9 @@ player board::get_winner() const {
     int starting_index2;
     int ending_index1;
     int ending_index2;
-    array<int, 2> diagonal_start;
+    coords diagonal_start;
 
-    array<array<int, 2>, 4> segment;
+    array<coords, 4> segment;
     player winner;
 
     // horizontal slash
@@ -183,7 +183,7 @@ player board::get_winner() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const board& b) {
-    array<int, 2> coord;
+    coords coord;
     for (int i = 0; i < board::height; i++) {
         for (int j = 0; j < board::width; j++) {
             coord.at(0) = j;
