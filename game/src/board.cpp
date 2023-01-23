@@ -173,8 +173,8 @@ player board::get_winner() const {
 
 std::ostream& operator<<(std::ostream& os, const board& b) {
     array<int, 2> coord;
-    for (int i = 0; i < b.height; i++) {
-        for (int j = 0; j < b.width; j++) {
+    for (int i = 0; i < board::height; i++) {
+        for (int j = 0; j < board::width; j++) {
             coord.at(0) = j;
             coord.at(1) = i;
             if (b.at(coord) == player::one) {
