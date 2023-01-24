@@ -1,5 +1,5 @@
-#include <board.hpp>
-#include <iostream>
+#include "board.hpp"
+// #include <iostream>
 
 board::board() {
     for (int i = 0; i < height; i++) {
@@ -8,6 +8,7 @@ board::board() {
         }
     }
     m_current_player = player::one;
+    update();
 }
 
 void board::switch_player() {
@@ -50,6 +51,7 @@ void board::play(int column) {
     }
 }
 
+/*
 void board::start_game() {
     int c;
     bool working = true;
@@ -74,6 +76,7 @@ void board::start_game() {
         }
     }
 }
+*/
 
 player& board::at(array<int, 2> coord) {
     return m_grid.at(coord.at(1)).at(coord.at(0));
@@ -171,22 +174,21 @@ player board::get_winner() const {
     return player::none;
 }
 
-std::ostream& operator<<(std::ostream& os, const board& b) {
-    array<int, 2> coord;
-    for (int i = 0; i < b.height; i++) {
-        for (int j = 0; j < b.width; j++) {
+void board::update() {
+  array<int, 2> coord;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             coord.at(0) = j;
             coord.at(1) = i;
-            if (b.at(coord) == player::one) {
-                os << 'Y';
-            } else if (b.at(coord) == player::two) {
-                os << 'R';
+            if (at(coord) == player::one) {
+                m_strip.setPixelColor(j + 7 * i, 255, 0, 0);
+            } else if (at(coord) == player::two) {
+                m_strip.setPixelColor(j + 7 * i, 255, 255, 0);
             } else {
-                os << '0';
+                m_strip.setPixelColor(j + 7 * i, 0, 0, 0);
             }
-            os << ' ';
         }
-        os << '\n';
     }
-    return os;
+    m_strip.show();
+
 }
