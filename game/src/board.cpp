@@ -1,11 +1,10 @@
 #include <board.hpp>
 #include <iostream>
-#include <string>
 
 board::board() {
-    for (auto& row : m_grid) {
-        for (auto& cell : row) {
-            cell = player::none;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            m_grid.at(i).at(j) = player::none;
         }
     }
     m_current_player = player::one;
@@ -16,13 +15,13 @@ void board::switch_player() {
 }
 
 bool board::is_column_full(int column) const {
-    return at({column, 0}) != player::none;
+    return m_grid.at(0).at(column) != player::none;
 }
 
 int board::get_upper(int column) const {
     // we assume that this is called on a non-full column
     for (int i = height - 1; i >= 0; i--) {
-        if (at({column, i}) == player::none) {
+        if (m_grid.at(i).at(column) == player::none) {
             return i;
         }
     }
@@ -41,10 +40,13 @@ bool board::is_full() const {
 
 void board::play(int column) {
     if (!is_column_full(column)) {
-        int top = get_upper(column);
-        at({column, top}) = m_current_player;
+        array<int, 2> coord;
+        coord.at(0) = column;
+        coord.at(1) = get_upper(column);
+
+        at(coord) = m_current_player;
         switch_player();
-        m_last_position_played = std::make_pair(column, top);
+        m_last_position_played.fill(coord);
     }
 }
 
@@ -59,6 +61,7 @@ void board::start_game() {
         std::cin >> c;
         play(c);
         std::cout << '\n' << *this << '\n';
+
         
         winner = get_winner();
         if (winner != player::none) {
@@ -72,20 +75,20 @@ void board::start_game() {
     }
 }
 
-player& board::at(std::pair<int, int> coord) {
-    return m_grid.at(coord.second).at(coord.first);
+player& board::at(array<int, 2> coord) {
+    return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
-const player& board::at(const std::pair<int, int> &coord) const {
-    return m_grid.at(coord.second).at(coord.first);
+const player& board::at(const array<int, 2> &coord) const {
+    return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
-player board::get_winner_from_arr(const std::array<std::pair<int, int>, 4> &coords) const {
+player board::get_winner_from_arr(const array<array<int, 2>, 4> &coords) const {
     player current_player;
     player next_player;
-    for (int i = 0; i < coords.size() - 1; i++) {
-        current_player = at(coords[i]);
-        next_player = at(coords[i+1]);
+    for (int i = 0; i < 3; i++) {
+        current_player = at(coords.at(i));
+        next_player = at(coords.at(i+1));
         if (current_player == player::none || current_player != next_player) {
             return player::none;
         }
@@ -94,16 +97,16 @@ player board::get_winner_from_arr(const std::array<std::pair<int, int>, 4> &coor
 }
 
 player board::get_winner() const {
-    int x = m_last_position_played.first;
-    int y = m_last_position_played.second;
+    int x = m_last_position_played.at(0);
+    int y = m_last_position_played.at(1);
 
     int starting_index1;
     int starting_index2;
     int ending_index1;
     int ending_index2;
-    std::pair<int, int> diagonal_start;
+    array<int, 2> diagonal_start;
 
-    std::array<std::pair<int, int>, 4> segment;
+    array<array<int, 2>, 4> segment;
     player winner;
 
     // horizontal slash
@@ -113,7 +116,8 @@ player board::get_winner() const {
     ending_index1 = ending_index1 <= width - 4 ? ending_index1 : width - 4;
     for (int i = starting_index1; i <= ending_index1; i++) {
         for (int j = 0; j < 4; j++) {
-            segment[j] = std::make_pair(i + j, y);
+            segment.at(j).at(0) = i + j;
+            segment.at(j).at(1) = y;
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -126,7 +130,8 @@ player board::get_winner() const {
     ending_index2 = ending_index2 <= height - 4 ? ending_index2 : height - 4;
     for (int i = starting_index2; i <= ending_index2; i++) {
         for (int j = 0; j < 4; j++) {
-            segment[j] = std::make_pair(x, i + j);
+            segment.at(j).at(0) = x;
+            segment.at(j).at(1) = i + j;
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -134,12 +139,14 @@ player board::get_winner() const {
 
     // diagonal (top left to bottom right) slash
     int min = x - starting_index1 <=  y - starting_index2 ? x - starting_index1 : y - starting_index2;
-    diagonal_start = std::make_pair(x - min, y - min);
-    min = ending_index1 - diagonal_start.first <=  ending_index2 - diagonal_start.second ? ending_index1 - diagonal_start.first : ending_index2 - diagonal_start.second;
+    diagonal_start.at(0) = x - min;
+    diagonal_start.at(1) = y - min;
+    min = ending_index1 - diagonal_start.at(0) <=  ending_index2 - diagonal_start.at(1) ? ending_index1 - diagonal_start.at(0) : ending_index2 - diagonal_start.at(1);
 
     for (int i = 0; i <= min; i++) {
         for (int j = 0; j < 4; j++) {
-            segment[j] = std::make_pair(diagonal_start.first + i + j, diagonal_start.second + i + j);
+            segment.at(j).at(0) = diagonal_start.at(0) + i + j;
+            segment.at(j).at(1) = diagonal_start.at(1) + i + j;
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -147,13 +154,15 @@ player board::get_winner() const {
 
     // diagonal (top right to bottom left) slash
     min = 3 + ending_index1 - x <=  y - starting_index2 ? 3 + ending_index1 - x : y - starting_index2;
-    diagonal_start = std::make_pair(x + min, y - min);
+    diagonal_start.at(0) = x + min;
+    diagonal_start.at(1) = y - min;
 
-    min = diagonal_start.first - starting_index1 <=  ending_index2 - diagonal_start.second ? diagonal_start.first - starting_index1 : ending_index2 - diagonal_start.second;
+    min = diagonal_start.at(0) - starting_index1 <=  ending_index2 - diagonal_start.at(1) ? diagonal_start.at(0) - starting_index1 : ending_index2 - diagonal_start.at(1);
 
     for (int i = 0; i <= min; i++) {
         for (int j = 0; j < 4; j++) {
-            segment[j] = std::make_pair(diagonal_start.first - i - j, diagonal_start.second + i + j);
+            segment.at(j).at(0) = diagonal_start.at(0) - i - j;
+            segment.at(j).at(1) = diagonal_start.at(1) + i + j;
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -163,11 +172,14 @@ player board::get_winner() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const board& b) {
+    array<int, 2> coord;
     for (int i = 0; i < b.height; i++) {
         for (int j = 0; j < b.width; j++) {
-            if (b.at({j, i}) == player::one) {
+            coord.at(0) = j;
+            coord.at(1) = i;
+            if (b.at(coord) == player::one) {
                 os << 'Y';
-            } else if (b.at({j, i}) == player::two) {
+            } else if (b.at(coord) == player::two) {
                 os << 'R';
             } else {
                 os << '0';
