@@ -19,7 +19,7 @@ class board {
         board();
         static constexpr int width = 7;
         static constexpr int height = 6;
-        static constexpr int ai_depth = 2;
+        static constexpr int ai_depth = 5;
 
         player& at(coords coordinates);
         const player& at(const coords& coordinates) const;
@@ -46,7 +46,7 @@ class board {
         int evaluate_arr(const array<coords, 4> &coordinates, const player& current_player) const;
         int evaluate_position(const player& current_player) const;
         int choose_column() const;
-        friend array<int, 2> negamax(const board &b, int depth, const player& player);
+        friend array<int, 2> negamax(const board &b, int depth, const player& player, int alpha, int beta);
 };
 
 

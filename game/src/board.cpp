@@ -278,11 +278,11 @@ int board::evaluate_position(const player &current_player) const {
 }
 
 int board::choose_column() const {
-    array<int, 2> ai_result = negamax(*this, ai_depth, player::two);
+    array<int, 2> ai_result = negamax(*this, ai_depth, player::two, -10000000, 10000000);
     return ai_result.at(1);
 }
 
-array<int, 2> negamax(const board &b, int depth, const player& current_player) {
+array<int, 2> negamax(const board &b, int depth, const player& current_player, int alpha, int beta) {
     if (depth == 0) {
       array<int, 2> result;
 
@@ -309,9 +309,9 @@ array<int, 2> negamax(const board &b, int depth, const player& current_player) {
 
             if (possible_winner != player::none) {
               best_subscore =
-                  10000000 * (possible_winner == current_player ? 1 : -1);
+                  1000000 * (possible_winner == current_player ? 1 : -1);
             } else {
-              array<int, 2> move_result = negamax(copied_board, depth - 1, opponent_player);
+              array<int, 2> move_result = negamax(copied_board, depth - 1, opponent_player, -alpha, -beta);
               best_subscore = move_result.at(0);
               best_submove = move_result.at(1);
               best_subscore *= -1;
@@ -321,6 +321,10 @@ array<int, 2> negamax(const board &b, int depth, const player& current_player) {
               best_score = best_subscore;
               best_move = move;
             }
+
+            alpha = std::max(alpha, best_score);
+            if (alpha > beta)
+              break;
         }
     }
 
