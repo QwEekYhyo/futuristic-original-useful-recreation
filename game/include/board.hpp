@@ -19,6 +19,7 @@ class board {
         board();
         static constexpr int width = 7;
         static constexpr int height = 6;
+        static constexpr int ai_depth = 2;
 
         player& at(coords coordinates);
         const player& at(const coords& coordinates) const;
@@ -37,6 +38,7 @@ class board {
         void play(int column);
         player get_winner_from_arr(const array<coords, 4> &coordinates) const;
         player get_winner() const;
+        player get_winning_move() const;
 
         template <int N>
         int count_in_arr(const array<coords, N> &coordinates, const player& target_player) const;
@@ -44,7 +46,7 @@ class board {
         int evaluate_arr(const array<coords, 4> &coordinates, const player& current_player) const;
         int evaluate_position(const player& current_player) const;
         int choose_column() const;
-        friend int negamax(const board &b, int depth, const player& player);
+        friend array<int, 2> negamax(const board &b, int depth, const player& player);
 };
 
 

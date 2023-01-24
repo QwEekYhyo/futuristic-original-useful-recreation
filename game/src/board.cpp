@@ -188,6 +188,17 @@ player board::get_winner() const {
     return player::none;
 }
 
+player board::get_winning_move() const {
+    for (int i = 0; i < board::width; i++) {
+        board copied_board = *this;
+        copied_board.play(i);
+        player winner = copied_board.get_winner();
+        if (winner != player::none)
+            return winner;
+    }
+    return player::none;
+}
+
 template <int N>
 int board::count_in_arr(const array<coords, N> &coordinates, const player& target_player) const {
     int ctr = 0;
@@ -212,7 +223,7 @@ int board::evaluate_arr(const array<coords, 4> &coordinates,
     int empty_count = count_in_arr(coordinates, player::none);
 
     if (player_count == 4) {
-        score += 1000;
+        score += 100;
     } else if (player_count == 3 && empty_count == 1) {
         score += 5;
     } else if (player_count == 2 && empty_count == 2) {
@@ -239,8 +250,29 @@ int board::evaluate_position(const player &current_player) const {
     int center_count = count_in_arr(center_segment, current_player);
     score += center_count * 6;
 
-    // TODO: other thing
+    // Evaluate rows
+    for (int y = 0; y < board::height; y++) {
+        for (int x = 0; x < board::width - 3; x++) {
+            array<coords, 4> row;
+            for (int i = 0; i < 4; i++) {
+                row.at(i).at(0) = i + y;
+                row.at(i).at(1) = x;
+            }
+            score += evaluate_arr(row, current_player);
+        }
+    }
 
+    // Evaluate cols
+    for (int x = 0; x < board::width; x++) {
+        for (int y = 0; y < board::height - 3; y++) {
+            array<coords, 4> col;
+            for (int i = 0; i < 4; i++) {
+                col.at(i).at(0) = y;
+                col.at(i).at(1) = i + x;
+            }
+            score += evaluate_arr(col, current_player);
+        }
+    }
 
     std::cout << "score: " << score << "\n";
 
@@ -248,40 +280,57 @@ int board::evaluate_position(const player &current_player) const {
 }
 
 int board::choose_column() const {
-    int max_score = 0;
-    int max_column = 0; // player zero by default, might be random
+    array<int, 2> ai_result = negamax(*this, ai_depth, player::two);
+    return ai_result.at(1);
+}
 
-    for (int i = 0; i < board::width; i++) {
-        if (!is_column_full(i)) {
-            int column_score = negamax(*this, 2, player::two);
-            if (column_score > max_score) {
-              max_score = column_score;
-              max_column = i;
+array<int, 2> negamax(const board &b, int depth, const player& current_player) {
+    if (depth == 0) {
+      array<int, 2> result;
+
+      result.at(0) = -1;
+      result.at(1) = b.evaluate_position(current_player);
+
+      return result;
+    }
+
+    int best_score = -100000000; // -infinity
+    int best_move = -1;
+
+    for (int move = 0; move < board::width; move++) {
+        if (!b.is_column_full(move)) {
+            board copied_board = b;
+            copied_board.play(move);
+            player opponent_player =
+                current_player == player::one ? player::two : player::one;
+
+            player possible_winner = copied_board.get_winning_move();
+
+            int best_subscore = 0;
+            int best_submove = 0;
+
+            if (possible_winner != player::none) {
+              best_subscore =
+                  10000000 * (possible_winner == current_player ? 1 : -1);
+            } else {
+              array<int, 2> move_result = negamax(copied_board, depth - 1, opponent_player);
+              best_subscore = move_result.at(0);
+              best_submove = move_result.at(1);
+              best_subscore *= -1;
+            }
+
+            if (best_subscore > best_score) {
+              best_score = best_subscore;
+              best_move = move;
             }
         }
     }
 
-    return max_column;
-}
+    array<int, 2> result; // best_score, best_column
+    result.at(0) = best_score;
+    result.at(1) = best_move;
 
-int negamax(const board &b, int depth, const player& current_player) {
-    if (depth == 0 /* || node is a terminal node */)
-        return b.evaluate_position(current_player);
-
-    int value = -1000000000; // -infinity
-
-    for (int i = 0; i < board::width; i++) {
-        if (!b.is_column_full(i)) {
-            board copied_board = b;
-            copied_board.play(i);
-            player opponent_player =
-                current_player == player::one ? player::two : player::one;
-            value = std::max(
-                value, -negamax(copied_board, depth - 1, opponent_player));
-        }
-    }
-
-    return 0;
+    return result;
 }
 
 std::ostream& operator<<(std::ostream& os, const board& b) {
