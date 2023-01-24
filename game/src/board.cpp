@@ -274,8 +274,6 @@ int board::evaluate_position(const player &current_player) const {
         }
     }
 
-    std::cout << "score: " << score << "\n";
-
     return score;
 }
 
