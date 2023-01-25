@@ -12,6 +12,10 @@ std::ostream& operator<<(std::ostream& os, const player& p) {
     return os;
 }
 
+player opponent_of(const player& p) {
+    return p == player::two ? player::one : player::two;
+}
+
 board::board() {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -22,7 +26,7 @@ board::board() {
 }
 
 void board::switch_player() {
-    m_current_player = m_current_player == player::one ? player::two : player::one;
+    m_current_player = opponent_of(m_current_player);
 }
 
 bool board::is_column_full(int column) const {
@@ -213,10 +217,7 @@ int board::count_in_arr(const array<coords, N> &coordinates, const player& targe
 int board::evaluate_arr(const array<coords, 4> &coordinates,
                         const player &current_player) const {
     int score = 0;
-    player opponent = player::one;
-
-    if (current_player == player::one)
-        opponent = player::two;
+    player opponent = opponent_of(current_player);
 
     int player_count = count_in_arr(coordinates, current_player);
     int opponent_count = count_in_arr(coordinates, opponent);
@@ -284,7 +285,7 @@ int board::choose_column() const {
 
 array<int, 2> negamax(const board &b, int depth, const player& current_player, int alpha, int beta) {
     if (depth == 0) {
-      array<int, 2> result;
+      pair<int> result;
 
       result.at(0) = -1;
       result.at(1) = b.evaluate_position(current_player);
@@ -299,8 +300,6 @@ array<int, 2> negamax(const board &b, int depth, const player& current_player, i
         if (!b.is_column_full(move)) {
             board copied_board = b;
             copied_board.play(move);
-            player opponent_player =
-                current_player == player::one ? player::two : player::one;
 
             player possible_winner = copied_board.get_winning_move();
 
@@ -311,7 +310,7 @@ array<int, 2> negamax(const board &b, int depth, const player& current_player, i
               best_subscore =
                   1000000 * (possible_winner == current_player ? 1 : -1);
             } else {
-              array<int, 2> move_result = negamax(copied_board, depth - 1, opponent_player, -alpha, -beta);
+              array<int, 2> move_result = negamax(copied_board, depth - 1, opponent_of(current_player), -alpha, -beta);
               best_subscore = move_result.at(0);
               best_submove = move_result.at(1);
               best_subscore *= -1;
@@ -328,7 +327,7 @@ array<int, 2> negamax(const board &b, int depth, const player& current_player, i
         }
     }
 
-    array<int, 2> result; // best_score, best_column
+    pair<int> result; // best_score, best_column
     result.at(0) = best_score;
     result.at(1) = best_move;
 

@@ -13,6 +13,7 @@ enum class player {
 };
 
 std::ostream& operator<<(std::ostream& os, const player& p);
+player opponent_of(const player& p);
 
 class board {
     public:
@@ -46,7 +47,7 @@ class board {
         int evaluate_arr(const array<coords, 4> &coordinates, const player& current_player) const;
         int evaluate_position(const player& current_player) const;
         int choose_column() const;
-        friend array<int, 2> negamax(const board &b, int depth, const player& player, int alpha, int beta);
+        friend pair<int> negamax(const board &b, int depth, const player& player, int alpha, int beta);
 };
 
 

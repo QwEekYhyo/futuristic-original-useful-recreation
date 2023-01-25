@@ -39,4 +39,7 @@ private:
   T m_buffer[N];
 };
 
+template <typename T>
+using pair = array<T, 2>;
+
 #endif
