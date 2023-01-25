@@ -55,9 +55,7 @@ bool board::is_full() const {
 
 void board::play(int column) {
     if (!is_column_full(column)) {
-        coords coord;
-        coord.at(0) = column;
-        coord.at(1) = get_upper(column);
+        coords coord = {column, get_upper(column)};
 
         at(coord) = m_current_player;
         switch_player();
@@ -137,8 +135,7 @@ player board::get_winner() const {
     ending_index1 = ending_index1 <= width - 4 ? ending_index1 : width - 4;
     for (int i = starting_index1; i <= ending_index1; i++) {
         for (int j = 0; j < 4; j++) {
-            segment.at(j).at(0) = i + j;
-            segment.at(j).at(1) = y;
+            segment.at(j) = {i + j, y};
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -151,8 +148,7 @@ player board::get_winner() const {
     ending_index2 = ending_index2 <= height - 4 ? ending_index2 : height - 4;
     for (int i = starting_index2; i <= ending_index2; i++) {
         for (int j = 0; j < 4; j++) {
-            segment.at(j).at(0) = x;
-            segment.at(j).at(1) = i + j;
+            segment.at(j) = {x, i + j};
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -160,14 +156,12 @@ player board::get_winner() const {
 
     // diagonal (top left to bottom right) slash
     int min = x - starting_index1 <=  y - starting_index2 ? x - starting_index1 : y - starting_index2;
-    diagonal_start.at(0) = x - min;
-    diagonal_start.at(1) = y - min;
+    diagonal_start = {x - min, y - min};
     min = ending_index1 - diagonal_start.at(0) <=  ending_index2 - diagonal_start.at(1) ? ending_index1 - diagonal_start.at(0) : ending_index2 - diagonal_start.at(1);
 
     for (int i = 0; i <= min; i++) {
         for (int j = 0; j < 4; j++) {
-            segment.at(j).at(0) = diagonal_start.at(0) + i + j;
-            segment.at(j).at(1) = diagonal_start.at(1) + i + j;
+            segment.at(j) = {diagonal_start.at(0) + i + j, diagonal_start.at(1) + i + j};
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -175,15 +169,12 @@ player board::get_winner() const {
 
     // diagonal (top right to bottom left) slash
     min = 3 + ending_index1 - x <=  y - starting_index2 ? 3 + ending_index1 - x : y - starting_index2;
-    diagonal_start.at(0) = x + min;
-    diagonal_start.at(1) = y - min;
-
+    diagonal_start = {x + min, y - min};
     min = diagonal_start.at(0) - starting_index1 <=  ending_index2 - diagonal_start.at(1) ? diagonal_start.at(0) - starting_index1 : ending_index2 - diagonal_start.at(1);
 
     for (int i = 0; i <= min; i++) {
         for (int j = 0; j < 4; j++) {
-            segment.at(j).at(0) = diagonal_start.at(0) - i - j;
-            segment.at(j).at(1) = diagonal_start.at(1) + i + j;
+            segment.at(j) = {diagonal_start.at(0) - i - j, diagonal_start.at(1) + i + j};
         }
         winner = get_winner_from_arr(segment);
         if (winner != player::none) {return winner;}
@@ -242,9 +233,7 @@ int board::evaluate_position(const player &current_player) const {
 
     array<coords, board::height> center_segment;
     for (int i = 0; i < board::height; i++) {
-        coords c;
-        c.at(0) = i;
-        c.at(1) = 3;
+        coords c = {i, 3};
         center_segment.at(i) = c;
     }
 
@@ -256,8 +245,7 @@ int board::evaluate_position(const player &current_player) const {
         for (int x = 0; x < board::width - 3; x++) {
             array<coords, 4> row;
             for (int i = 0; i < 4; i++) {
-                row.at(i).at(0) = i + y;
-                row.at(i).at(1) = x;
+                row.at(i) = {i + y, x};
             }
             score += evaluate_arr(row, current_player);
         }
@@ -268,8 +256,7 @@ int board::evaluate_position(const player &current_player) const {
         for (int y = 0; y < board::height - 3; y++) {
             array<coords, 4> col;
             for (int i = 0; i < 4; i++) {
-                col.at(i).at(0) = y;
-                col.at(i).at(1) = i + x;
+                col.at(i) = {y, i + x};
             }
             score += evaluate_arr(col, current_player);
         }
@@ -285,12 +272,7 @@ int board::choose_column() const {
 
 array<int, 2> negamax(const board &b, int depth, const player& current_player, int alpha, int beta) {
     if (depth == 0) {
-      pair<int> result;
-
-      result.at(0) = -1;
-      result.at(1) = b.evaluate_position(current_player);
-
-      return result;
+      return {-1, b.evaluate_position(current_player)};
     }
 
     int best_score = -100000000; // -infinity
@@ -327,19 +309,14 @@ array<int, 2> negamax(const board &b, int depth, const player& current_player, i
         }
     }
 
-    pair<int> result; // best_score, best_column
-    result.at(0) = best_score;
-    result.at(1) = best_move;
-
-    return result;
+    return {best_score, best_move};
 }
 
 std::ostream& operator<<(std::ostream& os, const board& b) {
     coords coord;
     for (int i = 0; i < board::height; i++) {
         for (int j = 0; j < board::width; j++) {
-            coord.at(0) = j;
-            coord.at(1) = i;
+            coord = {j, i};
             os << b.at(coord);
             os << ' ';
         }

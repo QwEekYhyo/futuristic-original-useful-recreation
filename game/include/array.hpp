@@ -12,6 +12,14 @@ public:
       fill(original);
   }
 
+  array(std::initializer_list<T> l) {
+      int i = 0;
+      for (const auto& element : l) {
+        m_buffer[i] = element;
+        i++;
+      }
+  }
+
   T& at(int index) {
     // TODO: Bound check
     return m_buffer[index];
