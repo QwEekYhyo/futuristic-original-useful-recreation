@@ -1,6 +1,6 @@
 #include <board.hpp>
 
-int main(void) {
+int main() {
     board b;
     b.start_game();
     return 0;
