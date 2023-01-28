@@ -23,15 +23,6 @@ enum class player {
 std::ostream& operator<<(std::ostream& os, const player& p);
 player opponent_of(const player& p);
 
-namespace difficulty {
-enum {
-  easy = 1,
-  medium = 3,
-  hard = 6,
-  impossible = 9,
-};
-}
-
 class board {
     public:
         board();

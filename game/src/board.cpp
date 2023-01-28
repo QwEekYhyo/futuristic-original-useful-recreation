@@ -295,7 +295,7 @@ int board::evaluate_position(const player &current_player) const {
 }
 
 int board::choose_column() const {
-  array<int, 2> ai_result = minimax(*this, difficulty::medium, NEGATIVE_INFINITY, POSITIVE_INFINITY, true);
+  array<int, 2> ai_result = minimax(*this, 7, NEGATIVE_INFINITY, POSITIVE_INFINITY, true);
   int column = ai_result.at(0);
   if (is_column_full(column)) {
     throw std::runtime_error("AI died during computing (consider this a win, jammy bastard)");
