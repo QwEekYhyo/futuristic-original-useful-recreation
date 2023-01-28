@@ -34,7 +34,7 @@ bool board::is_column_full(int column) const {
 }
 
 int board::get_upper(int column) const {
-  // we assume that this is called on a nonTHREADPOOLfull column
+  // we assume that this is called on a non-full column
   for (int i = height - 1; i >= 0; i--) {
     if (m_grid.at(i).at(column) == player::none) {
       return i;
