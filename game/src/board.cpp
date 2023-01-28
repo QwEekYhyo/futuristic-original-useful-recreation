@@ -7,7 +7,7 @@ std::ostream &operator<<(std::ostream &os, const player &p) {
   } else if (p == player::two) {
     os << 'R';
   } else {
-    os << '0';
+    os << '.';
   }
   return os;
 }
@@ -34,7 +34,7 @@ bool board::is_column_full(int column) const {
 }
 
 int board::get_upper(int column) const {
-  // we assume that this is called on a non-full column
+  // we assume that this is called on a nonTHREADPOOLfull column
   for (int i = height - 1; i >= 0; i--) {
     if (m_grid.at(i).at(column) == player::none) {
       return i;
@@ -64,21 +64,21 @@ void board::play(int column) {
 }
 
 void board::start_game() {
-  int c;
   bool working = true;
   player winner;
 
   std::cout << *this << '\n';
   while (working) {
-    if (m_current_player == player::two) {
+    if (m_current_player == player::one) {
+      int c;
+      std::cout << "Column : ";
+      std::cin >> c;
+      play(c - 1);
+    } else {
       int choice = choose_column();
       play(choice);
-      std::cout << '\n' << *this << '\n';
-      continue;
     }
-    std::cout << "Column : ";
-    std::cin >> c;
-    play(c);
+
     std::cout << '\n' << *this << '\n';
 
     winner = get_winner();
@@ -200,17 +200,6 @@ player board::get_winner() const {
   return player::none;
 }
 
-player board::get_winning_move() const {
-  for (int i = 0; i < board::width; i++) {
-    board copied_board = *this;
-    copied_board.play(i);
-    player winner = copied_board.get_winner();
-    if (winner != player::none)
-      return winner;
-  }
-  return player::none;
-}
-
 template <int N>
 int board::count_in_arr(const array<coords, N> &coordinates,
                         const player &target_player) const {
@@ -280,17 +269,63 @@ int board::evaluate_position(const player &current_player) const {
     }
   }
 
+  // Slash
+  for (int r = 3; r < board::height; r++) {
+    for (int c = 0; c < board::width - 3; c++) {
+      array<coords, 4> diag;
+      for (int i = 0; i < 4; i++) {
+        diag.at(i) = {c + i, r - i};
+      }
+      score += evaluate_arr(diag, current_player);
+    }
+  }
+
+  // Backslash
+  for (int r = 3; r < board::height; r++) {
+    for (int c = 3; c < board::width; c++) {
+      array<coords, 4> diag;
+      for (int i = 0; i < 4; i++) {
+        diag.at(i) = {c - i, r - i};
+      }
+      score += evaluate_arr(diag, current_player);
+    }
+  }
+
   return score;
 }
 
 int board::choose_column() const {
-  array<int, 2> ai_result = minimax(*this, ai_depth, NEGATIVE_INFINITY, POSITIVE_INFINITY, true);
-  return ai_result.at(0);
+  array<int, 2> ai_result = minimax(*this, difficulty::medium, NEGATIVE_INFINITY, POSITIVE_INFINITY, true);
+  int column = ai_result.at(0);
+  if (is_column_full(column)) {
+    throw std::runtime_error("AI died during computing (consider this a win, jammy bastard)");
+  }
+  return column;
+}
+
+int board::random_playable_column() const {
+  int column;
+#if defined(USE_RANDOM)
+  do {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 6);
+    column = static_cast<int>(dist6(rng));
+  } while (is_column_full(column));
+#else
+  for (int i = 0; i < 6; i++) {
+    if (!is_column_full(i)) {
+      column = i;
+      break;
+    }
+  }
+#endif
+  return column;
 }
 
 pair<int> minimax(const board &b, int depth, int alpha, int beta,
                   bool maximizing_player) {
-  player winner = b.get_winning_move();
+  player winner = b.get_winner();
   if (depth == 0 || winner != player::none) {
     if (winner == player::two) {
       return {-1, 10000000};
@@ -303,7 +338,7 @@ pair<int> minimax(const board &b, int depth, int alpha, int beta,
 
   if (maximizing_player) {
     int score = NEGATIVE_INFINITY;
-    int column = -1;
+    int column = b.random_playable_column();
 
     for (int i = 0; i < board::width; i++) {
       if (!b.is_column_full(i)) {
@@ -324,7 +359,7 @@ pair<int> minimax(const board &b, int depth, int alpha, int beta,
     return {column, score};
   } else {
     int score = POSITIVE_INFINITY;
-    int column = -1;
+    int column = b.random_playable_column();
 
     for (int i = 0; i < board::width; i++) {
       if (!b.is_column_full(i)) {

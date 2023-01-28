@@ -1,8 +1,13 @@
 #ifndef GAME_BOARD_HPP
 #define GAME_BOARD_HPP
 
+#define USE_RANDOM
+
 #include <array.hpp>
 #include <iostream>
+#if defined(USE_RANDOM)
+#include <random>
+#endif
 
 constexpr int POSITIVE_INFINITY = 1000000000;
 constexpr int NEGATIVE_INFINITY = -POSITIVE_INFINITY;
@@ -18,12 +23,20 @@ enum class player {
 std::ostream& operator<<(std::ostream& os, const player& p);
 player opponent_of(const player& p);
 
+namespace difficulty {
+enum {
+  easy = 1,
+  medium = 3,
+  hard = 6,
+  impossible = 9,
+};
+}
+
 class board {
     public:
         board();
         static constexpr int width = 7;
         static constexpr int height = 6;
-        static constexpr int ai_depth = 4;
 
         player& at(coords coordinates);
         const player& at(const coords& coordinates) const;
@@ -42,7 +55,7 @@ class board {
         void play(int column);
         player get_winner_from_arr(const array<coords, 4> &coordinates) const;
         player get_winner() const;
-        player get_winning_move() const;
+        int random_playable_column() const;
 
         template <int N>
         int count_in_arr(const array<coords, N> &coordinates, const player& target_player) const;
