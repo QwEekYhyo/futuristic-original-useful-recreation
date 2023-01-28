@@ -4,6 +4,9 @@
 #include <array.hpp>
 #include <iostream>
 
+constexpr int POSITIVE_INFINITY = 1000000000;
+constexpr int NEGATIVE_INFINITY = -POSITIVE_INFINITY;
+
 using coords = array<int, 2>;
 
 enum class player {
@@ -20,7 +23,7 @@ class board {
         board();
         static constexpr int width = 7;
         static constexpr int height = 6;
-        static constexpr int ai_depth = 5;
+        static constexpr int ai_depth = 4;
 
         player& at(coords coordinates);
         const player& at(const coords& coordinates) const;
@@ -47,7 +50,7 @@ class board {
         int evaluate_arr(const array<coords, 4> &coordinates, const player& current_player) const;
         int evaluate_position(const player& current_player) const;
         int choose_column() const;
-        friend pair<int> negamax(const board &b, int depth, const player& player, int alpha, int beta);
+        friend pair<int> minimax(const board &b, int depth, int alpha, int beta, bool maximizing_player);
 };
 
 
