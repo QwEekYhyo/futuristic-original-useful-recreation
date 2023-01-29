@@ -1,7 +1,7 @@
 #include <board.hpp>
 #include <iostream>
 
-std::ostream &operator<<(std::ostream &os, const player &p) {
+std::ostream& operator<<(std::ostream& os, const player& p) {
   if (p == player::one) {
     os << 'Y';
   } else if (p == player::two) {
@@ -12,7 +12,7 @@ std::ostream &operator<<(std::ostream &os, const player &p) {
   return os;
 }
 
-player opponent_of(const player &p) {
+player opponent_of(const player& p) {
   return p == player::two ? player::one : player::two;
 }
 
@@ -40,8 +40,8 @@ int board::get_upper(int column) const {
       return i;
     }
   }
-  return 69; // compiler is crying because it might return void but in
-             // reality it cannot
+  return 69;  // compiler is crying because it might return void but in
+              // reality it cannot
 }
 
 bool board::is_full() const {
@@ -93,15 +93,15 @@ void board::start_game() {
   }
 }
 
-player &board::at(array<int, 2> coord) {
+player& board::at(array<int, 2> coord) {
   return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
-const player &board::at(const array<int, 2> &coord) const {
+const player& board::at(const array<int, 2>& coord) const {
   return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
-player board::get_winner_from_arr(const array<array<int, 2>, 4> &coords) const {
+player board::get_winner_from_arr(const array<array<int, 2>, 4>& coords) const {
   player current_player;
   player next_player;
   for (int i = 0; i < 3; i++) {
@@ -201,19 +201,18 @@ player board::get_winner() const {
 }
 
 template <int N>
-int board::count_in_arr(const array<coords, N> &coordinates,
-                        const player &target_player) const {
+int board::count_in_arr(const array<coords, N>& coordinates,
+                        const player& target_player) const {
   int ctr = 0;
   for (int i = 0; i < N; i++) {
-    const coords &c = coordinates.at(i);
-    if (at(c) == target_player)
-      ctr++;
+    const coords& c = coordinates.at(i);
+    if (at(c) == target_player) ctr++;
   }
   return ctr;
 }
 
-int board::evaluate_arr(const array<coords, 4> &coordinates,
-                        const player &current_player) const {
+int board::evaluate_arr(const array<coords, 4>& coordinates,
+                        const player& current_player) const {
   int score = 0;
   player opponent = opponent_of(current_player);
 
@@ -229,13 +228,12 @@ int board::evaluate_arr(const array<coords, 4> &coordinates,
     score += 2;
   }
 
-  if (opponent_count == 3 && empty_count == 1)
-    score -= 4;
+  if (opponent_count == 3 && empty_count == 1) score -= 4;
 
   return score;
 }
 
-int board::evaluate_position(const player &current_player) const {
+int board::evaluate_position(const player& current_player) const {
   int score = 0;
 
   array<coords, board::height> center_segment;
@@ -295,10 +293,12 @@ int board::evaluate_position(const player &current_player) const {
 }
 
 int board::choose_column() const {
-  array<int, 2> ai_result = minimax(*this, 7, NEGATIVE_INFINITY, POSITIVE_INFINITY, true);
+  array<int, 2> ai_result =
+      minimax(*this, 7, NEGATIVE_INFINITY, POSITIVE_INFINITY, true);
   int column = ai_result.at(0);
   if (is_column_full(column)) {
-    throw std::runtime_error("AI died during computing (consider this a win, jammy bastard)");
+    throw std::runtime_error(
+        "AI died during computing (consider this a win, jammy bastard)");
   }
   return column;
 }
@@ -323,7 +323,7 @@ int board::random_playable_column() const {
   return column;
 }
 
-pair<int> minimax(const board &b, int depth, int alpha, int beta,
+pair<int> minimax(const board& b, int depth, int alpha, int beta,
                   bool maximizing_player) {
   player winner = b.get_winner();
   if (depth == 0 || winner != player::none) {
@@ -351,8 +351,7 @@ pair<int> minimax(const board &b, int depth, int alpha, int beta,
           column = i;
         }
         alpha = std::max(score, alpha);
-        if (alpha >= beta)
-          break;
+        if (alpha >= beta) break;
       }
     }
 
@@ -372,8 +371,7 @@ pair<int> minimax(const board &b, int depth, int alpha, int beta,
           column = i;
         }
         beta = std::min(score, beta);
-        if (alpha >= beta)
-          break;
+        if (alpha >= beta) break;
       }
     }
 
@@ -381,7 +379,7 @@ pair<int> minimax(const board &b, int depth, int alpha, int beta,
   }
 }
 
-std::ostream &operator<<(std::ostream &os, const board &b) {
+std::ostream& operator<<(std::ostream& os, const board& b) {
   coords coord;
   for (int i = 0; i < board::height; i++) {
     for (int j = 0; j < board::width; j++) {
