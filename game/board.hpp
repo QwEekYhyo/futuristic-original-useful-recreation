@@ -21,21 +21,25 @@ class board {
         player& at(array<int, 2> coordinates);
         const player& at(const array<int, 2> &coordinates) const;
         // void start_game();
-        void play(int column);
         void update();
         player get_winner() const;
         bool is_full() const;
         // friend std::ostream& operator<<(std::ostream& os, const board& b);
 
+        void move_cursor(int direction);
+        void validate();
+
     private:
         array<array<player, width>, height> m_grid;
         player m_current_player;
+        int cursor{3};
         array<int, 2> m_last_position_played;
 
         void switch_player();
         bool is_column_full(int column) const;
         int get_upper(int column) const;
         player get_winner_from_arr(const array<array<int, 2>, 4> &coordinates) const;
+        void play(int column);
 };
 
 #endif

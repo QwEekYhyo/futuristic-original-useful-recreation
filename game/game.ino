@@ -6,6 +6,15 @@ bool working = true;
 player winner;
 board b;
 
+void led(Adafruit_NeoPixel& strip, int r, int g, int b) {
+   for(int i = 0; i < 42; i++ ) { // On fait une boucle pour définir la couleur de chaque led
+      // setPixelColor(n° de led, Rouge, Vert, Bleu)
+      strip.setPixelColor(i, r, g, b);       
+   }
+   strip.show(); // on affiche
+   delay(1000);
+}
+
 int readline(int readch, char *buffer, int len) {
     static int pos = 0;
     int rpos;
@@ -31,7 +40,10 @@ int readline(int readch, char *buffer, int len) {
 void setup() {
   b.m_strip = Adafruit_NeoPixel(b.width * b.height, 6, NEO_GRB + NEO_KHZ800);
   b.m_strip.begin();
-  b.m_strip.show();
+  led(b.m_strip, 255, 0, 0);
+  led(b.m_strip, 0, 255, 0);
+  led(b.m_strip, 0, 0, 255);
+  led(b.m_strip, 0, 0, 0);
   Serial.begin(9600);
   b.update();
 }
@@ -41,13 +53,15 @@ void loop() {
   Serial.println("Which column do you wish to play in ?");
   while (readline(Serial.read(), buf, 80) == 0) {}
   c = atoi(buf);
-  if (c < b.width) {
-    b.play(c);
+  if (c != 2) {
+    b.move_cursor(c);
     Serial.println(c);
+  } else {
+    b.validate();
     b.update();
     winner = b.get_winner();
     if (winner != player::none) {
-      const char* s_winner = winner == player::one ? "Player 1" : "Player 2";
+      String s_winner = winner == player::one ? "Player 1" : "Player 2";
       Serial.print(s_winner);
       Serial.println(" won !!");
       working = false;

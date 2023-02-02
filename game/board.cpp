@@ -51,6 +51,21 @@ void board::play(int column) {
     }
 }
 
+void board::move_cursor(int d) {
+  if (!d) {
+    cursor--;
+  } else if (d == 1) {
+    cursor++;
+  }
+  if (cursor < 0) {cursor = 0;}
+  else if (cursor > 6) {cursor = 6;}
+}
+
+void board::validate() {
+  play(cursor);
+  cursor = 3;
+}
+
 /*
 void board::start_game() {
     int c;
