@@ -138,7 +138,7 @@ player board::get_winner() const {
             segment.at(j).at(1) = y;
         }
         winner = get_winner_from_arr(segment);
-        if (winner != player::none) {return winner;}
+        if (winner != player::none) {winning_seg.fill(segment); return winner;}
     }
 
     // vertical slash
@@ -152,7 +152,7 @@ player board::get_winner() const {
             segment.at(j).at(1) = i + j;
         }
         winner = get_winner_from_arr(segment);
-        if (winner != player::none) {return winner;}
+        if (winner != player::none) {winning_seg.fill(segment); return winner;}
     }
 
     // diagonal (top left to bottom right) slash
@@ -167,7 +167,7 @@ player board::get_winner() const {
             segment.at(j).at(1) = diagonal_start.at(1) + i + j;
         }
         winner = get_winner_from_arr(segment);
-        if (winner != player::none) {return winner;}
+        if (winner != player::none) {winning_seg.fill(segment); return winner;}
     }
 
     // diagonal (top right to bottom left) slash
@@ -183,7 +183,7 @@ player board::get_winner() const {
             segment.at(j).at(1) = diagonal_start.at(1) + i + j;
         }
         winner = get_winner_from_arr(segment);
-        if (winner != player::none) {return winner;}
+        if (winner != player::none) {winning_seg.fill(segment); return winner;}
     }
 
     return player::none;
@@ -206,4 +206,22 @@ void board::update() {
     }
     m_strip.show();
 
+}
+
+void board::win_anim() {
+  player winner = at(winning_seg.at(0));
+  for (int i = 0; i < 4; i++) { 
+    for (int j = 0; j < 4; j++) {
+      auto coord = winning_seg.at(j);
+      at(coord) = player::none;
+    }
+    update();
+    delay(500);
+    for (int j = 0; j < 4; j++) {
+      auto coord = winning_seg.at(j);
+      at(coord) = winner;
+    }
+    update();
+    delay(500);
+  }
 }

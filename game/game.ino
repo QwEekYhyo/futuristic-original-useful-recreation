@@ -64,6 +64,7 @@ void loop() {
       String s_winner = winner == player::one ? "Player 1" : "Player 2";
       Serial.print(s_winner);
       Serial.println(" won !!");
+      b.win_anim();
       working = false;
     } else if (b.is_full()) {
       Serial.println("Game over ! This is a tie");

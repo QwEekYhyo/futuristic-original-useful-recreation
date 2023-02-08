@@ -28,12 +28,14 @@ class board {
 
         void move_cursor(int direction);
         void validate();
+        void win_anim();
 
     private:
         array<array<player, width>, height> m_grid;
         player m_current_player;
         int cursor{3};
         array<int, 2> m_last_position_played;
+        array<array<int, 2>, 4> winning_seg;
 
         void switch_player();
         bool is_column_full(int column) const;
