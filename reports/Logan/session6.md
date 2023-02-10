@@ -38,7 +38,7 @@ the 4 coordinates of the winning coins. The value of this attribute is not chang
     delay(500);
   }
   ```
- - Then I had to use the `winning_seg` private attribute mentionned above, this was done in the `player get_winner()` method.
+ - Then I had to get the value for the `winning_seg` private attribute mentionned above, this was done in the `player get_winner()` method.
   This method returns a player, either the winning player or `player::none` if no one has won yet. The ending of each directionnal checking used to be : `if (winner != player::none) {return winner;}`
   which basically means that if, out of all of the segments of size 4 checked using the `player board::get_winner_from_arr(const array<array<int, 2>, 4> &coords) const` method, a real player is found,
   not none, we will return it and if nothing is returned we continue checking. I changed the lines to this : <br />
