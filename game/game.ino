@@ -1,7 +1,7 @@
 #include "board.hpp"
 
-char buf[80];
-int c;
+// char buf[80];
+// int c;
 bool working = true;
 player winner;
 board b;
@@ -15,6 +15,7 @@ void led(Adafruit_NeoPixel& strip, int r, int g, int b) {
    delay(1000);
 }
 
+// we do not need this anymore
 int readline(int readch, char *buffer, int len) {
     static int pos = 0;
     int rpos;
@@ -38,6 +39,9 @@ int readline(int readch, char *buffer, int len) {
 }
 
 void setup() {
+  pinMode(2, INPUT_PULLUP);
+  pinMode(3, INPUT_PULLUP);
+  pinMode(5, INPUT_PULLUP);
   b.m_strip = Adafruit_NeoPixel(b.width * b.height, 6, NEO_GRB + NEO_KHZ800);
   b.m_strip.begin();
   led(b.m_strip, 255, 0, 0);
@@ -50,12 +54,16 @@ void setup() {
 
 void loop() {  
   if (working) {
-  Serial.println("Which column do you wish to play in ?");
-  while (readline(Serial.read(), buf, 80) == 0) {}
-  c = atoi(buf);
-  if (c != 2) {
-    b.move_cursor(c);
-    Serial.println(c);
+  int left = digitalRead(3);
+  int right = digitalRead(5);
+  int check = digitalRead(2);
+  if (left + right + check == 2) {
+  if (check) {
+    if (!left) {
+    b.move_cursor(0);
+    } else {
+    b.move_cursor(1);
+    }
   } else {
     b.validate();
     b.update();
@@ -70,6 +78,8 @@ void loop() {
       Serial.println("Game over ! This is a tie");
       working = false;
     }
+  }
+  delay(400);
   }
   }
 } 
