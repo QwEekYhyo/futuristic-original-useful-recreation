@@ -1,7 +1,7 @@
 #include <board.hpp>
 
-int main(void) {
-    board b;
-    b.start_game();
-    return 0;
+int main() {
+  board b;
+  b.start_game();
+  return 0;
 }
