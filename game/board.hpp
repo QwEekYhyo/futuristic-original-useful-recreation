@@ -17,6 +17,7 @@ class board {
         static constexpr int width = 7;
         static constexpr int height = 6;
         Adafruit_NeoPixel m_strip;
+        Adafruit_NeoPixel top_strip;
 
         player& at(array<int, 2> coordinates);
         const player& at(const array<int, 2> &coordinates) const;

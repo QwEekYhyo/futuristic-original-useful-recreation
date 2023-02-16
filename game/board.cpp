@@ -52,6 +52,7 @@ void board::play(int column) {
 }
 
 void board::move_cursor(int d) {
+  top_strip.setPixelColor(- cursor + 6, 0, 0, 0);
   if (!d) {
     cursor--;
   } else if (d == 1) {
@@ -59,11 +60,16 @@ void board::move_cursor(int d) {
   }
   if (cursor < 0) {cursor = 0;}
   else if (cursor > 6) {cursor = 6;}
+  top_strip.setPixelColor(- cursor + 6, 200, 40, 200);
+  top_strip.show();
 }
 
 void board::validate() {
+  top_strip.setPixelColor(- cursor + 6, 0, 0, 0);
   play(cursor);
   cursor = 3;
+  top_strip.setPixelColor(- cursor + 6, 200, 40, 200);
+  top_strip.show();
 }
 
 /*

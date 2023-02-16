@@ -12,7 +12,6 @@ void led(Adafruit_NeoPixel& strip, int r, int g, int b) {
       strip.setPixelColor(i, r, g, b);       
    }
    strip.show(); // on affiche
-   delay(1000);
 }
 
 // we do not need this anymore
@@ -44,10 +43,21 @@ void setup() {
   pinMode(5, INPUT_PULLUP);
   b.m_strip = Adafruit_NeoPixel(b.width * b.height, 6, NEO_GRB + NEO_KHZ800);
   b.m_strip.begin();
+  b.top_strip = Adafruit_NeoPixel(b.width, 7, NEO_GRB + NEO_KHZ800);
+  b.top_strip.begin();
   led(b.m_strip, 255, 0, 0);
+  led(b.top_strip, 255, 0, 0);
+  delay(1000);
   led(b.m_strip, 0, 255, 0);
+  led(b.top_strip, 0, 255, 0);
+  delay(1000);
   led(b.m_strip, 0, 0, 255);
+  led(b.top_strip, 0, 0, 255);
+  delay(1000);
   led(b.m_strip, 0, 0, 0);
+  led(b.top_strip, 0, 0, 0);
+  b.top_strip.setPixelColor(3, 200, 40, 200);
+  b.top_strip.show();
   Serial.begin(9600);
   b.update();
 }
