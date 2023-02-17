@@ -2,60 +2,60 @@
 // #include <iostream>
 
 player opponent_of(const player& p) {
-    return p == player::two ? player::one : player::two;
+  return p == player::two ? player::one : player::two;
 }
 
 board::board() {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            m_grid.at(i).at(j) = player::none;
-        }
+  for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
+      m_grid.at(i).at(j) = player::none;
     }
-    real_players = {player::one, player::none};
-    m_current_player = player::one;
+  }
+  real_players = {player::one, player::none};
+  m_current_player = player::one;
 }
 
 void board::switch_player() {
-    m_current_player = opponent_of(m_current_player);
+  m_current_player = opponent_of(m_current_player);
 }
 
 bool board::is_current_player_ai() {
-    return !real_players.contains(m_current_player);
+  return !real_players.contains(m_current_player);
 }
 
 bool board::is_column_full(int column) const {
-    return m_grid.at(0).at(column) != player::none;
+  return m_grid.at(0).at(column) != player::none;
 }
 
 int board::get_upper(int column) const {
-    // we assume that this is called on a non-full column
-    for (int i = height - 1; i >= 0; i--) {
-        if (m_grid.at(i).at(column) == player::none) {
-            return i;
-        }
+  // we assume that this is called on a non-full column
+  for (int i = height - 1; i >= 0; i--) {
+    if (m_grid.at(i).at(column) == player::none) {
+      return i;
     }
-    return 69; // compiler is crying because it might return void but in
-               // reality it cannot
+  }
+  return 69; // compiler is crying because it might return void but in
+  // reality it cannot
 }
 
 bool board::is_full() const {
-    for (int i = 0; i < width; i++) {
-        if (!is_column_full(i)) {
-            return false;
-        }
+  for (int i = 0; i < width; i++) {
+    if (!is_column_full(i)) {
+      return false;
     }
-    return true;
+  }
+  return true;
 }
 
 void board::play(int column) {
-    if (!is_column_full(column)) {
-        coords coord = {column, get_upper(column)};
+  if (!is_column_full(column)) {
+    coords coord = {column, get_upper(column)};
 
-        at(coord) = m_current_player;
-        switch_player();
-        m_last_position_played.fill(coord);
-        // update();
-    }
+    at(coord) = m_current_player;
+    switch_player();
+    m_last_position_played.fill(coord);
+    // update();
+  }
 }
 
 void board::move_cursor(int d) {
@@ -65,8 +65,12 @@ void board::move_cursor(int d) {
   } else if (d == 1) {
     cursor++;
   }
-  if (cursor < 0) {cursor = 0;}
-  else if (cursor > 6) {cursor = 6;}
+  if (cursor < 0) {
+    cursor = 0;
+  }
+  else if (cursor > 6) {
+    cursor = 6;
+  }
   top_strip->setPixelColor(- cursor + 6, 200, 40, 200);
   top_strip->show();
 }
@@ -80,7 +84,7 @@ void board::validate() {
 }
 
 /*
-void board::start_game() {
+  void board::start_game() {
     int c;
     bool working = true;
     player winner;
@@ -92,7 +96,7 @@ void board::start_game() {
         play(c);
         std::cout << '\n' << *this << '\n';
 
-        
+
         winner = get_winner();
         if (winner != player::none) {
             std::string s_winner = winner == player::one ? "Player 1" : "Player 2";
@@ -103,97 +107,109 @@ void board::start_game() {
             working = false;
         }
     }
-}
+  }
 */
 
 player& board::at(array<int, 2> coord) {
-    return m_grid.at(coord.at(1)).at(coord.at(0));
+  return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
 const player& board::at(const array<int, 2> &coord) const {
-    return m_grid.at(coord.at(1)).at(coord.at(0));
+  return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
 player board::get_winner_from_arr(const array<array<int, 2>, 4> &coords) const {
-    player current_player;
-    player next_player;
-    for (int i = 0; i < 3; i++) {
-        current_player = at(coords.at(i));
-        next_player = at(coords.at(i+1));
-        if (current_player == player::none || current_player != next_player) {
-            return player::none;
-        }
+  player current_player;
+  player next_player;
+  for (int i = 0; i < 3; i++) {
+    current_player = at(coords.at(i));
+    next_player = at(coords.at(i + 1));
+    if (current_player == player::none || current_player != next_player) {
+      return player::none;
     }
-    return current_player;
+  }
+  return current_player;
 }
 
 player board::get_winner() const {
-    int x = m_last_position_played.at(0);
-    int y = m_last_position_played.at(1);
+  int x = m_last_position_played.at(0);
+  int y = m_last_position_played.at(1);
 
-    int starting_index1;
-    int starting_index2;
-    int ending_index1;
-    int ending_index2;
-    coords diagonal_start;
+  int starting_index1;
+  int starting_index2;
+  int ending_index1;
+  int ending_index2;
+  coords diagonal_start;
 
-    array<coords, 4> segment;
-    player winner;
+  array<coords, 4> segment;
+  player winner;
 
-    // horizontal slash
-    starting_index1 = x - 3;
-    starting_index1 = starting_index1 >= 0 ? starting_index1 : 0;
-    ending_index1 = x;
-    ending_index1 = ending_index1 <= width - 4 ? ending_index1 : width - 4;
-    for (int i = starting_index1; i <= ending_index1; i++) {
-        for (int j = 0; j < 4; j++) {
-            segment.at(j) = {i + j, y};
-        }bool is_current_player_ai();
-        winner = get_winner_from_arr(segment);
-        if (winner != player::none) {winning_seg.fill(segment); return winner;}
+  // horizontal slash
+  starting_index1 = x - 3;
+  starting_index1 = starting_index1 >= 0 ? starting_index1 : 0;
+  ending_index1 = x;
+  ending_index1 = ending_index1 <= width - 4 ? ending_index1 : width - 4;
+  for (int i = starting_index1; i <= ending_index1; i++) {
+    for (int j = 0; j < 4; j++) {
+      segment.at(j) = {i + j, y};
+    } bool is_current_player_ai();
+    winner = get_winner_from_arr(segment);
+    if (winner != player::none) {
+      winning_seg.fill(segment);
+      return winner;
     }
+  }
 
-    // vertical slash
-    starting_index2 = y - 3;
-    starting_index2 = starting_index2 >= 0 ? starting_index2 : 0;
-    ending_index2 = y;
-    ending_index2 = ending_index2 <= height - 4 ? ending_index2 : height - 4;
-    for (int i = starting_index2; i <= ending_index2; i++) {
-        for (int j = 0; j < 4; j++) {
-            segment.at(j) = {x, i + j};
-        }
-        winner = get_winner_from_arr(segment);
-        if (winner != player::none) {winning_seg.fill(segment); return winner;}
+  // vertical slash
+  starting_index2 = y - 3;
+  starting_index2 = starting_index2 >= 0 ? starting_index2 : 0;
+  ending_index2 = y;
+  ending_index2 = ending_index2 <= height - 4 ? ending_index2 : height - 4;
+  for (int i = starting_index2; i <= ending_index2; i++) {
+    for (int j = 0; j < 4; j++) {
+      segment.at(j) = {x, i + j};
     }
-
-    // diagonal (top left to bottom right) slash
-    int min = x - starting_index1 <=  y - starting_index2 ? x - starting_index1 : y - starting_index2;
-    diagonal_start = {x - min, y - min};
-    min = ending_index1 - diagonal_start.at(0) <=  ending_index2 - diagonal_start.at(1) ? ending_index1 - diagonal_start.at(0) : ending_index2 - diagonal_start.at(1);
-
-    for (int i = 0; i <= min; i++) {
-        for (int j = 0; j < 4; j++) {
-            segment.at(j) = {diagonal_start.at(0) + i + j, diagonal_start.at(1) + i + j};
-        }
-        winner = get_winner_from_arr(segment);
-        if (winner != player::none) {winning_seg.fill(segment); return winner;}
+    winner = get_winner_from_arr(segment);
+    if (winner != player::none) {
+      winning_seg.fill(segment);
+      return winner;
     }
+  }
 
-    // diagonal (top right to bottom left) slash
-    min = 3 + ending_index1 - x <=  y - starting_index2 ? 3 + ending_index1 - x : y - starting_index2;
-    diagonal_start = {x + min, y - min};
+  // diagonal (top left to bottom right) slash
+  int min = x - starting_index1 <=  y - starting_index2 ? x - starting_index1 : y - starting_index2;
+  diagonal_start = {x - min, y - min};
+  min = ending_index1 - diagonal_start.at(0) <=  ending_index2 - diagonal_start.at(1) ? ending_index1 - diagonal_start.at(0) : ending_index2 - diagonal_start.at(1);
 
-    min = diagonal_start.at(0) - starting_index1 <=  ending_index2 - diagonal_start.at(1) ? diagonal_start.at(0) - starting_index1 : ending_index2 - diagonal_start.at(1);
-
-    for (int i = 0; i <= min; i++) {
-        for (int j = 0; j < 4; j++) {
-            segment.at(j) = {diagonal_start.at(0) - i - j, diagonal_start.at(1) + i + j};
-        }
-        winner = get_winner_from_arr(segment);
-        if (winner != player::none) {winning_seg.fill(segment); return winner;}
+  for (int i = 0; i <= min; i++) {
+    for (int j = 0; j < 4; j++) {
+      segment.at(j) = {diagonal_start.at(0) + i + j, diagonal_start.at(1) + i + j};
     }
+    winner = get_winner_from_arr(segment);
+    if (winner != player::none) {
+      winning_seg.fill(segment);
+      return winner;
+    }
+  }
 
-    return player::none;
+  // diagonal (top right to bottom left) slash
+  min = 3 + ending_index1 - x <=  y - starting_index2 ? 3 + ending_index1 - x : y - starting_index2;
+  diagonal_start = {x + min, y - min};
+
+  min = diagonal_start.at(0) - starting_index1 <=  ending_index2 - diagonal_start.at(1) ? diagonal_start.at(0) - starting_index1 : ending_index2 - diagonal_start.at(1);
+
+  for (int i = 0; i <= min; i++) {
+    for (int j = 0; j < 4; j++) {
+      segment.at(j) = {diagonal_start.at(0) - i - j, diagonal_start.at(1) + i + j};
+    }
+    winner = get_winner_from_arr(segment);
+    if (winner != player::none) {
+      winning_seg.fill(segment);
+      return winner;
+    }
+  }
+
+  return player::none;
 }
 
 template <int N>
@@ -320,11 +336,11 @@ pair<int> minimax(const board& b, int depth, int alpha, int beta, bool maximizin
   player winner = b.get_winner();
   if (depth == 0 || winner != player::none) {
     if (winner == b.m_current_ai) {
-      return {-1, POSITIVE_INFINITY};
+      return { -1, POSITIVE_INFINITY};
     } else if (winner == opponent_of(b.m_current_ai)) {
-      return {-1, NEGATIVE_INFINITY}; // -10000000
+      return { -1, NEGATIVE_INFINITY}; // -10000000
     } else {
-      return {-1, b.evaluate_position(b.m_current_ai)};
+      return { -1, b.evaluate_position(b.m_current_ai)};
     }
   }
 
@@ -373,26 +389,26 @@ pair<int> minimax(const board& b, int depth, int alpha, int beta, bool maximizin
 
 void board::update() {
   coords coord;
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            coord.at(0) = j;
-            coord.at(1) = i;
-            if (at(coord) == player::one) {
-                m_strip->setPixelColor(j + 7 * i, 255, 0, 0);
-            } else if (at(coord) == player::two) {
-                m_strip->setPixelColor(j + 7 * i, 255, 255, 0);
-            } else {
-                m_strip->setPixelColor(j + 7 * i, 0, 0, 0);
-            }
-        }
+  for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
+      coord.at(0) = j;
+      coord.at(1) = i;
+      if (at(coord) == player::one) {
+        m_strip->setPixelColor(j + 7 * i, 255, 0, 0);
+      } else if (at(coord) == player::two) {
+        m_strip->setPixelColor(j + 7 * i, 255, 255, 0);
+      } else {
+        m_strip->setPixelColor(j + 7 * i, 0, 0, 0);
+      }
     }
-    m_strip->show();
+  }
+  m_strip->show();
 
 }
 
 void board::win_anim() {
   player winner = at(winning_seg.at(0));
-  for (int i = 0; i < 4; i++) { 
+  for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       auto coord = winning_seg.at(j);
       at(coord) = player::none;
