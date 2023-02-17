@@ -20,4 +20,5 @@ Ainsi, les boutons dépasserons de notre socle et lorsque l’on exercera une fo
 
 Il nous reste à placer les éléments (batterie, carte Arduino et branchements) dans le socle, peindre ce dernier et notre puissance 4 sera terminé. 
 <img width="308" alt="Capture d’écran 2023-02-17 à 16 28 32" src="https://user-images.githubusercontent.com/120170016/219697511-e94e6eec-5ce6-4f65-b87a-2368aa0696ce.png">
-![socle](https://user-images.githubusercontent.com/120170016/219697580-cd6cab4c-e7bb-4f74-a8aa-b19c7201e5de.svg)
+![socle copie 2](https://user-images.githubusercontent.com/120170016/219698039-af6b2c8d-76a7-424c-9f1e-242f7311a3a4.svg)
+
