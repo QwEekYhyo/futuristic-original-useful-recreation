@@ -22,3 +22,4 @@ Il nous reste à placer les éléments (batterie, carte Arduino et branchements)
 <img width="308" alt="Capture d’écran 2023-02-17 à 16 28 32" src="https://user-images.githubusercontent.com/120170016/219697511-e94e6eec-5ce6-4f65-b87a-2368aa0696ce.png">
 ![socle copie 2](https://user-images.githubusercontent.com/120170016/219698039-af6b2c8d-76a7-424c-9f1e-242f7311a3a4.svg)
 
+<img width="895" alt="modélisation 2D socle" src="https://user-images.githubusercontent.com/120170016/219698277-d2fa5c61-f365-4ccd-9eaf-008cfe39f081.png">
