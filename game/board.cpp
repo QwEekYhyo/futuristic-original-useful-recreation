@@ -1,5 +1,4 @@
 #include "board.hpp"
-// #include <iostream>
 
 player opponent_of(const player& p) {
   return p == player::two ? player::one : player::two;
@@ -50,27 +49,16 @@ bool board::is_full() const {
 void board::play(int column) {
   if (!is_column_full(column)) {
     coords coord = {column, get_upper(column)};
-
     at(coord) = m_current_player;
-    switch_player();
     m_last_position_played.fill(coord);
-    // update();
+    switch_player();
   }
 }
 
 void board::move_cursor(int d) {
   top_strip->setPixelColor(- cursor + 6, 0, 0, 0);
-  if (!d) {
-    cursor--;
-  } else if (d == 1) {
-    cursor++;
-  }
-  if (cursor < 0) {
-    cursor = 0;
-  }
-  else if (cursor > 6) {
-    cursor = 6;
-  }
+  cursor += d;
+  cursor = constrain(cursor, 0, 6);
   top_strip->setPixelColor(- cursor + 6, 200, 40, 200);
   top_strip->show();
 }
@@ -83,42 +71,15 @@ void board::validate() {
   top_strip->show();
 }
 
-/*
-  void board::start_game() {
-    int c;
-    bool working = true;
-    player winner;
-
-    std::cout << *this << '\n';
-    while (working) {
-        std::cout << "Column : ";
-        std::cin >> c;
-        play(c);
-        std::cout << '\n' << *this << '\n';
-
-
-        winner = get_winner();
-        if (winner != player::none) {
-            std::string s_winner = winner == player::one ? "Player 1" : "Player 2";
-            std::cout << s_winner << " won !!" << std::endl;
-            working = false;
-        } else if (is_full()) {
-            std::cout << "Game over ! This is a tie" << std::endl;
-            working = false;
-        }
-    }
-  }
-*/
-
-player& board::at(array<int, 2> coord) {
+player& board::at(coords coord) {
   return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
-const player& board::at(const array<int, 2> &coord) const {
+const player& board::at(const coords& coord) const {
   return m_grid.at(coord.at(1)).at(coord.at(0));
 }
 
-player board::get_winner_from_arr(const array<array<int, 2>, 4> &coords) const {
+player board::get_winner_from_arr(const array<coords, 4> &coords) const {
   player current_player;
   player next_player;
   for (int i = 0; i < 3; i++) {
@@ -152,7 +113,7 @@ player board::get_winner() const {
   for (int i = starting_index1; i <= ending_index1; i++) {
     for (int j = 0; j < 4; j++) {
       segment.at(j) = {i + j, y};
-    } bool is_current_player_ai();
+    }
     winner = get_winner_from_arr(segment);
     if (winner != player::none) {
       winning_seg.fill(segment);
@@ -388,11 +349,9 @@ pair<int> minimax(const board& b, int depth, int alpha, int beta, bool maximizin
 }
 
 void board::update() {
-  coords coord;
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
-      coord.at(0) = j;
-      coord.at(1) = i;
+      coords coord = {j, i};
       if (at(coord) == player::one) {
         m_strip->setPixelColor(j + 7 * i, 255, 0, 0);
       } else if (at(coord) == player::two) {
@@ -410,13 +369,13 @@ void board::win_anim() {
   player winner = at(winning_seg.at(0));
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
-      auto coord = winning_seg.at(j);
+      coords coord = winning_seg.at(j);
       at(coord) = player::none;
     }
     update();
     delay(500);
     for (int j = 0; j < 4; j++) {
-      auto coord = winning_seg.at(j);
+      coords coord = winning_seg.at(j);
       at(coord) = winner;
     }
     update();
