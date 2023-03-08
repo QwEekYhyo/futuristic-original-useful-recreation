@@ -297,9 +297,9 @@ pair<int> minimax(const board& b, int depth, int alpha, int beta, bool maximizin
   player winner = b.get_winner();
   if (depth == 0 || winner != player::none) {
     if (winner == b.m_current_ai) {
-      return { -1, POSITIVE_INFINITY};
+      return { -1, 1000000};
     } else if (winner == opponent_of(b.m_current_ai)) {
-      return { -1, NEGATIVE_INFINITY}; // -10000000
+      return { -1, -1000000}; // -10000000
     } else {
       return { -1, b.evaluate_position(b.m_current_ai)};
     }

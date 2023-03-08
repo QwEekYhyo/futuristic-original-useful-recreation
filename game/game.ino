@@ -14,6 +14,7 @@ void led(Adafruit_NeoPixel& strip, int r, int g, int b) {
 }
 
 void setup() {
+  Serial.begin(9600);
   pinMode(2, INPUT_PULLUP);
   pinMode(3, INPUT_PULLUP);
   pinMode(5, INPUT_PULLUP);
@@ -45,8 +46,8 @@ void loop() {
       b.update();
     } else {
       int left = digitalRead(2);
-      int right = digitalRead(5);
-      int check = digitalRead(3);
+      int right = digitalRead(3);
+      int check = digitalRead(5);
       if (left + right + check == 2) {
         if (check) {
           if (!left) {
@@ -68,5 +69,13 @@ void loop() {
     } else if (b.is_full()) {
       working = false;
     }
+  } else {
+    b = board();
+    working = true;
+    winner = player::none;
+    b.m_strip = &strip;
+    b.top_strip = &top;
+    b.update();
+    delay(500);
   }
 }
